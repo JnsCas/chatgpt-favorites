@@ -1,0 +1,16 @@
+body {
+    width: 300px;
+    font-family: Arial, sans-serif;
+    padding: 10px;
+}
+
+h2 {
+    font-size: 18px;
+}
+
+li {
+    list-style: none;
+    padding: 8px;
+    border-bottom: 1px solid #ddd;
+    cursor: pointer;
+}

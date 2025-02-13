@@ -1,0 +1,18 @@
+{
+  "manifest_version": 3,
+  "name": "ChatGPT Favorites",
+  "version": "1.0",
+  "description": "Guarda y accede rápidamente a tus respuestas favoritas en ChatGPT.",
+  "permissions": ["storage", "scripting", "activeTab"],
+  "host_permissions": ["https://chatgpt.com/*"],
+  "content_scripts": [
+    {
+      "matches": ["https://chatgpt.com/*"],
+      "js": ["./scripts/content.js"],
+      "type": "module"
+    }
+  ],
+  "action": {
+    "default_popup": "./popup/popup.html"
+  }
+}
