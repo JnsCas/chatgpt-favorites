@@ -1,16 +1,102 @@
 body {
-    width: 300px;
-    font-family: Arial, sans-serif;
-    padding: 10px;
+    width: 320px;
+    height: 400px; /* Altura fija para el popup */
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #f7f7f8;
+    color: #343541;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden; /* Evita el scroll en el body */
 }
 
-h2 {
+header {
+    background-color: #10a37f;
+    padding: 16px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    flex-shrink: 0; /* Evita que el header se encoja */
+}
+
+h1 {
     font-size: 18px;
+    color: white;
+    margin: 0;
+    text-align: center;
+}
+
+main {
+    flex-grow: 1;
+    overflow-y: auto; /* Agrega scroll vertical */
+    padding: 16px;
+}
+
+ul {
+    padding: 0;
+    margin: 0;
 }
 
 li {
     list-style: none;
-    padding: 8px;
-    border-bottom: 1px solid #ddd;
+    padding: 12px;
+    background-color: white;
+    border-radius: 8px;
+    margin-bottom: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    transition: background-color 0.2s ease;
     cursor: pointer;
+}
+
+li:hover {
+    background-color: #f0f0f0;
+}
+
+.favorite-text {
+    flex-grow: 1;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.delete-btn {
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: #ff4d4f;
+    transition: transform 0.2s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 4px;
+    margin-left: 8px; /* Añade un poco de espacio entre el texto y el botón */
+}
+
+.delete-btn:hover {
+    transform: scale(1.2);
+}
+
+.delete-btn svg {
+    width: 16px;
+    height: 16px;
+}
+
+/* Estilo para la barra de desplazamiento */
+main::-webkit-scrollbar {
+    width: 8px;
+}
+
+main::-webkit-scrollbar-track {
+    background: #f1f1f1;
+}
+
+main::-webkit-scrollbar-thumb {
+    background: #888;
+    border-radius: 4px;
+}
+
+main::-webkit-scrollbar-thumb:hover {
+    background: #555;
 }

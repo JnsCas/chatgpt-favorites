@@ -1,77 +1,77 @@
-console.log("✅ ChatGPT Favorites iniciado");
+console.log("✅ ChatGPT Favorites started");
 
-// Función para agregar botones de favorito y eliminar
-function addFavoriteButton(responseNode) {
-  if (responseNode.querySelector(".favorite-btn")) return; // Evita duplicados
+const CHAT_GPT_RESPONSE_SELECTOR = '.markdown'
+const DATA_FAV_ID_ATTRIBUTE = "data-fav-id";
+const STARRED = '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>';
+const STAR = '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>'
 
+function createStarButtonElement() {
   const button = document.createElement("button");
-  button.innerText = "⭐";
+  button.innerHTML = STAR;
   button.classList.add("favorite-btn");
+
   button.style.marginLeft = "10px";
   button.style.cursor = "pointer";
   button.style.border = "none";
   button.style.background = "transparent";
   button.style.fontSize = "18px";
+  button.style.transition = "transform 0.2s ease";
+  button.style.color = "#10a37f";
 
-  button.addEventListener("click", () => {
-    saveFavorite(responseNode);
-    button.innerText = "✅"; // Cambia a checkmark cuando se guarda
+  button.addEventListener("mouseover", () => {
+    button.style.transform = "scale(1.2)";
   });
 
-  responseNode.prepend(button);
+  button.addEventListener("mouseout", () => {
+    button.style.transform = "scale(1)";
+  });
+  return button;
+}
 
-  // Verificar si la respuesta ya está guardada y actualizar el icono
+function addStarButton(responseNode) {
+  if (responseNode.querySelector(".favorite-btn")) return; // avoid duplicates
+
+  const starButtonElement = createStarButtonElement()
+
+  starButtonElement.addEventListener("click", () => {
+    saveFavorite(responseNode, starButtonElement);
+    starButtonElement.innerHTML = STARRED;
+  });
+
+  responseNode.prepend(starButtonElement);
+
+  // Verify if the response is already marked as favorite and update the icon
   chrome.storage.local.get({ favorites: [] }, (data) => {
-    const fav = data.favorites.find((fav) => fav.text === responseNode.innerText);
+    const fav = data.favorites.find((fav) => fav.text.trim() === responseNode.innerText.trim());
     if (fav) {
-      responseNode.setAttribute("data-fav-id", fav.id);
-      button.innerText = "✅"; // Mostrar que ya está guardado
+      responseNode.setAttribute(DATA_FAV_ID_ATTRIBUTE, fav.id);
+      starButtonElement.innerHTML = STARRED;
     }
   });
 }
 
-// Guardar respuesta en `chrome.storage.local`
+// Save responses in `chrome.storage.local`
 function saveFavorite(responseNode) {
   const text = responseNode.innerText;
-  const id = `fav-${Date.now()}`; // ID único
-  responseNode.setAttribute("data-fav-id", id); // Marca el nodo con el ID
+  const id = `fav-${Date.now()}`;
+  responseNode.setAttribute(DATA_FAV_ID_ATTRIBUTE, id);
 
   chrome.storage.local.get({ favorites: [] }, (data) => {
     const favorites = data.favorites;
     favorites.push({ id, text });
     chrome.storage.local.set({ favorites }, () => {
-      console.log("✅ Respuesta guardada como favorita.");
+      console.log("✅ ChatGPT response saved as favorite.");
     });
   });
 }
 
-// Restaurar el estado de los favoritos al cargar la página
-function restoreFavoriteStates() {
-  chrome.storage.local.get({ favorites: [] }, (data) => {
-    document.querySelectorAll('.markdown').forEach((node) => {
-      const nodeText = node.innerText.trim();
-      // Buscamos un favorito que coincida (puede que necesitemos ajustar la comparación)
-      const matchingFav = data.favorites.find((fav) => fav.text.trim() === nodeText);
-      if (matchingFav) {
-        node.setAttribute('data-fav-id', matchingFav.id);
-        let btn = node.querySelector('.favorite-btn');
-        if (!btn) {
-          addFavoriteButton(node);
-          btn = node.querySelector('.favorite-btn');
-        }
-        btn.innerText = "✅";
-      }
-    });
-  });
-}
-
-// Observador para detectar nuevas respuestas
+// observer to detect new ChatGPT responses
 const observer = new MutationObserver((mutations) => {
   mutations.forEach((mutation) => {
     mutation.addedNodes.forEach((node) => {
       if (node.nodeType === 1 && node.matches(".markdown")) {
-        console.log("📩 Nueva respuesta detectada.");
-        addFavoriteButton(node);
+        console.log("📩 New ChatGPT response detected.");
+        addStarButton(node);
       }
     });
   });
@@ -79,32 +79,43 @@ const observer = new MutationObserver((mutations) => {
 
 observer.observe(document.body, { childList: true, subtree: true });
 
-// Esperar a que se cargue el contenido del chat
+// wait until chat is loaded
 window.addEventListener("load", () => {
   const checkInterval = setInterval(() => {
-    const responses = document.querySelectorAll('.markdown');
+    const responses = document.querySelectorAll(CHAT_GPT_RESPONSE_SELECTOR);
     if (responses && responses.length > 0) {
-      responses.forEach(addFavoriteButton);
-      restoreFavoriteStates();
+      responses.forEach(addStarButton);
       clearInterval(checkInterval);
     }
   }, 500);
 });
 
-// Escuchar mensajes para actualizar la UI (por ejemplo, remover el favorito)
-chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
-  if (message.action === "removeFavoriteUI") {
-    const favId = message.id;
-    const element = document.querySelector(`[data-fav-id="${favId}"]`);
-    if (element) {
-      element.removeAttribute("data-fav-id");
-      const button = element.querySelector(".favorite-btn");
-      if (button) {
-        button.innerText = "⭐"; // Restablecer el botón
-        console.log("Actualizado el botón de favorito para", favId);
-      }
-    } else {
-      console.log("No se encontró elemento con data-fav-id", favId);
-    }
+
+document.addEventListener("visibilitychange", () => {
+  if (!document.hidden) {
+    const responses = document.querySelectorAll(CHAT_GPT_RESPONSE_SELECTOR);
+    responses.forEach(addStarButton);
   }
 });
+
+
+// listening messages to update UI
+chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
+  if (message.action === "removeFavoriteUI") {
+    removeFavoriteHandler(message.id);
+  }
+});
+
+function removeFavoriteHandler(id) {
+  const element = document.querySelector(`[data-fav-id="${id}"]`);
+  if (element) {
+    element.removeAttribute(DATA_FAV_ID_ATTRIBUTE);
+    const button = element.querySelector(".favorite-btn");
+    if (button) {
+      button.innerHTML = STAR;
+      console.log("Reset button id: ", id);
+    }
+  } else {
+    console.log("Element not found, data-fav-id", id);
+  }
+}
