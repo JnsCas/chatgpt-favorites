@@ -7,7 +7,12 @@ function createFavoriteElement(favorite) {
 
   const favoriteText = document.createElement("span");
   favoriteText.classList.add("favorite-text");
-  favoriteText.innerText = favorite.text.substring(0, 50) + "...";
+  if (favorite.name !== '') {
+    favoriteText.style.fontWeight = "bold";
+    favoriteText.innerText = favorite.name;
+  } else {
+    favoriteText.innerText = favorite.text.substring(0, 50) + "...";
+  }
   li.appendChild(favoriteText);
 
   li.addEventListener("click", () => scrollToFavorite(favorite.id));
@@ -17,8 +22,10 @@ function createFavoriteElement(favorite) {
   deleteButton.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>';
   li.appendChild(deleteButton);
   deleteButton.addEventListener("click", (e) => {
-    e.stopPropagation(); // Evita que haga scroll si queremos eliminar
-    removeFavorite(favorite.id);
+    e.stopPropagation();
+    chrome.runtime.sendMessage({ action: "removeFavoriteFromStorage", source: 'popup', id: favorite.id }, () =>
+      refreshFavoritesList()
+    );
   });
 
   li.appendChild(deleteButton);
@@ -48,23 +55,6 @@ function scrollToFavorite(id) {
         }
       },
       args: [id]
-    });
-  });
-}
-
-function removeFavorite(id) {
-  chrome.storage.local.get({ favorites: [] }, (data) => {
-    const updatedFavorites = data.favorites.filter((fav) => fav.id !== id);
-    chrome.storage.local.set({ favorites: updatedFavorites }, () => {
-      console.log("🗑️ Favorite removed.");
-      refreshFavoritesList();
-
-      // Enviar mensaje al content script para actualizar la UI
-      chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
-        if (tabs[0]) {
-          chrome.tabs.sendMessage(tabs[0].id, { action: "removeFavoriteUI", id: id });
-        }
-      });
     });
   });
 }

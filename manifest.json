@@ -5,6 +5,9 @@
   "description": "Save and quickly access your favorite responses in ChatGPT.",
   "permissions": ["storage", "scripting", "activeTab"],
   "host_permissions": ["https://chatgpt.com/*"],
+  "background": {
+    "service_worker": "background.js"
+  },
   "content_scripts": [
     {
       "matches": ["https://chatgpt.com/*"],
