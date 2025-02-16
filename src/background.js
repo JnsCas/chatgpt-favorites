@@ -13,11 +13,12 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
         });
       });
     });
-    return true;
   } else if (message.action === "removeFavoriteFromStorage") {
     removeFavoriteFromStorage(message);
     console.log('Favorite removed')
+    sendResponse({ success: true });
   }
+  return true;
 });
 
 function removeFavoriteFromStorage(message) {
