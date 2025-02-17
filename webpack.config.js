@@ -7,7 +7,7 @@ module.exports = {
   entry: {
     background: './src/background.js',
     content: './src/content.js',
-    popup: './src/popup/popup.js'
+    popup: './src/popup/index.js'
   },
   output: {
     filename: '[name].js',
@@ -17,8 +17,8 @@ module.exports = {
     new CopyWebpackPlugin({
       patterns: [
         { from: 'manifest.json', to: 'manifest.json' },
-        { from: 'src/popup/popup.html', to: 'popup.html' },
-        { from: 'src/popup/popup.css', to: 'popup.css' },
+        { from: 'public/index.html', to: 'index.html' },
+        { from: 'public/popup.css', to: 'popup.css' },
       ]
     })
   ],
