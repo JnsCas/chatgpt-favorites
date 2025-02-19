@@ -10,12 +10,13 @@ ChatGPT Favorites is a Chrome extension designed to help you mark and quickly na
 
    ```bash
    git clone git@github.com:JnsCas/chatgpt-favorites.git
-
+1. Run `npm install`
+1. Run `npm run build`
 2. Load the Extension in Chrome:
 
    - Open Chrome and navigate to `chrome://extensions/`.
    - Enable Developer mode.
-   - Click `Load unpacked` and select the project folder.
+   - Click `Load unpacked` and select the `dist` folder.
 3. The extension will be loaded and ready for use.
 
 ---

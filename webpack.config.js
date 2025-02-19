@@ -19,6 +19,7 @@ module.exports = {
         { from: 'manifest.json', to: 'manifest.json' },
         { from: 'public/index.html', to: 'index.html' },
         { from: 'public/popup.css', to: 'popup.css' },
+        { from: 'public/icons/', to: 'icons/' },
       ]
     })
   ],
