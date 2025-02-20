@@ -1,8 +1,6 @@
 # ChatGPT Favorites
 
-ChatGPT Favorites is a Chrome extension designed to help you mark and quickly navigate to your favorite ChatGPT responses.
-
----
+Chrome extension designed to help you mark and quickly navigate to your favorite ChatGPT responses.
 
 ## Installation
 
@@ -18,8 +16,6 @@ ChatGPT Favorites is a Chrome extension designed to help you mark and quickly na
    - Enable Developer mode.
    - Click `Load unpacked` and select the `dist` folder.
 3. The extension will be loaded and ready for use.
-
----
 
 ## Usage
 1. Open ChatGPT and wait for the conversation to load.
@@ -38,8 +34,6 @@ ChatGPT Favorites is a Chrome extension designed to help you mark and quickly na
 
    - You can remove favorites directly from the popup or by clicking the star again on the response.
 
----
-
 ## Contributing
 Contributions are welcome! To contribute:
 
@@ -52,12 +46,10 @@ Contributions are welcome! To contribute:
 1. Make your changes and commit.
 1. Open a Pull Request with a description of your changes.
 
----
-
 ## License
 [MIT](https://github.com/JnsCas/chatgpt-favorites/blob/main/LICENSE)
 
----
+##
 
 Thank you for using ChatGPT Favorites!
 If you have any suggestions or improvements, please feel free to contribute or open an issue.
